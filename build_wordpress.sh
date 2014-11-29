@@ -8,7 +8,7 @@ do
 done
 
 # Put our files in the right place
-cp wordpress-patches SOURCES/.
+cp wordpress-patches/* SOURCES/.
 cp wordpress.spec SPECS/.
 
 # Have spectool download the sources in the source file.
