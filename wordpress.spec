@@ -12,7 +12,7 @@ URL:        http://www.wordpress.org
 Name:       wordpress
 Version:    %{?version}
 Group:      Applications/Publishing
-Release:    1%{?dist}
+Release:    %{?dist}
 License:    GPLv2
 
 Source0:    http://wordpress.org/%{name}-%{version}.tar.gz
