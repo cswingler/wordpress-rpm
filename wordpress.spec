@@ -33,7 +33,7 @@ Patch0: wordpress-debian_patches_hello.patch
 # This patch doesn’t work well, see bugzilla.redhat.com/522897
 Patch1: wordpress-move-wp-content.patch
 # Drop swfupload: not built from source, not reasonably possible to do
-Patch2: wordpress-3.9-no_swfupload.patch
+Patch2: wordpress-4.2-no_swfupload.patch
 # Adjust tinymce's media plugin not to use its SWF plugin. This changes
 # 'p.getParam("flash_video_player_url",u.convertUrl(u.url+"/moxieplayer.swf"))'
 # to 'false'
@@ -41,7 +41,7 @@ Patch3: wordpress-4.0-tinymce_noflash.patch
 # Adjust mediaelement not to use its SWF and Silverlight plugins. This
 # changes 'plugins:["flash,"silverlight","youtube","vimeo"]' to
 # 'plugins:["youtube","vimeo"]'
-Patch4: wordpress-4.1-mediaelement-noflash_silverlight.patch
+Patch4: wordpress-4.2-mediaelement-noflash_silverlight.patch
 # RPM configuration:
 # Path to installation
 # Disable auto-updater
@@ -50,7 +50,7 @@ Patch5: wordpress-4.0-config.patch
 # disable version check and updated
 # change DISALLOW_FILE_MODS default value to true
 # ignore WP_AUTO_UPDATE_CORE (always false)
-Patch6: wordpress-4.1-noupdate.patch
+Patch6: wordpress-4.2-noupdate.patch
 # Use system libraries
 Patch7: wordpress-4.0-systemlibs.patch
 
