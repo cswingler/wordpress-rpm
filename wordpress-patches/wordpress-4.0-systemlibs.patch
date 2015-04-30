@@ -1,0 +1,21 @@
+diff -up wordpress/wp-admin/includes/media.php.old wordpress/wp-admin/includes/media.php
+--- wordpress/wp-admin/includes/media.php.old	2014-09-30 08:54:21.666519693 +0200
++++ wordpress/wp-admin/includes/media.php	2014-09-30 08:55:11.247757421 +0200
+@@ -2907,7 +2907,7 @@ function wp_read_video_metadata( $file )
+ 	$metadata = array();
+ 
+ 	if ( ! class_exists( 'getID3' ) )
+-		require( ABSPATH . WPINC . '/ID3/getid3.php' );
++		require( '/usr/share/php/getid3/getid3.php' );
+ 	$id3 = new getID3();
+ 	$data = $id3->analyze( $file );
+ 
+@@ -2962,7 +2962,7 @@ function wp_read_audio_metadata( $file )
+ 	$metadata = array();
+ 
+ 	if ( ! class_exists( 'getID3' ) )
+-		require( ABSPATH . WPINC . '/ID3/getid3.php' );
++		require( '/usr/share/php/getid3/getid3.php' );
+ 	$id3 = new getID3();
+ 	$data = $id3->analyze( $file );
+ 

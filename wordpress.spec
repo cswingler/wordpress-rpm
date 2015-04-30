@@ -6,13 +6,19 @@
 %else
 %global with_cacert 1
 %endif
+# https://bugzilla.redhat.com/1147817 php53-getid3 review
+%if 0%{?fedora} >= 17 || 0%{?rhel} >= 6
+%global with_getid3 1
+%else
+%global with_getid3 0
+%endif
 
 Summary:    Blog tool and publishing platform
 URL:        http://www.wordpress.org
 Name:       wordpress
 Version:    %{?version}
 Group:      Applications/Publishing
-Release:    %{?dist}
+Release:    {?dist}
 License:    GPLv2
 
 Source0:    http://wordpress.org/%{name}-%{version}.tar.gz
@@ -35,7 +41,7 @@ Patch3: wordpress-4.0-tinymce_noflash.patch
 # Adjust mediaelement not to use its SWF and Silverlight plugins. This
 # changes 'plugins:["flash,"silverlight","youtube","vimeo"]' to
 # 'plugins:["youtube","vimeo"]'
-Patch4: wordpress-3.9-mediaelement-noflash_silverlight.patch
+Patch4: wordpress-4.1-mediaelement-noflash_silverlight.patch
 # RPM configuration:
 # Path to installation
 # Disable auto-updater
@@ -44,7 +50,9 @@ Patch5: wordpress-4.0-config.patch
 # disable version check and updated
 # change DISALLOW_FILE_MODS default value to true
 # ignore WP_AUTO_UPDATE_CORE (always false)
-Patch6: wordpress-4.0-noupdate.patch
+Patch6: wordpress-4.1-noupdate.patch
+# Use system libraries
+Patch7: wordpress-4.0-systemlibs.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch: noarch
@@ -52,9 +60,15 @@ BuildArch: noarch
 %if 0%{?rhel} == 5
 Requires: php53 >= 5.2.4
 Requires: php53-simplepie >= 1.3.1
+%if %{with_getid3}
+Requires: php53-getid3
+%endif
 %else
 Requires: php >= 5.2.4
 Requires: php-simplepie >= 1.3.1
+%if %{with_getid3}
+Requires: php-getid3
+%endif
 %endif
 # From phpcompatinfo report for version 3.8
 Requires: php-curl
@@ -132,6 +146,9 @@ rm wp-content/plugins/akismet/.htaccess
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%if %{with_getid3}
+%patch7 -p1
+%endif
 
 # We patch a .js file, used patched file instead of unpatch minified one
 ln -sf plugin.js wp-includes/js/tinymce/plugins/media/plugin.min.js
@@ -187,12 +204,12 @@ find ${RPM_BUILD_ROOT} -type f -empty -exec rm -vf {} \;
 rm -f ${RPM_BUILD_ROOT}%{_datadir}/wordpress/{license.txt,readme.html}
 
 # Remove bundled php-simplepie and link to system copy
-rm     ${RPM_BUILD_ROOT}%{_datadir}/wordpress/wp-includes/class-simplepie.php
-rm -rf ${RPM_BUILD_ROOT}%{_datadir}/wordpress/wp-includes/SimplePie
+rm    ${RPM_BUILD_ROOT}%{_datadir}/wordpress/wp-includes/class-simplepie.php
+rm -r ${RPM_BUILD_ROOT}%{_datadir}/wordpress/wp-includes/SimplePie
 %if 0%{?rhel} == 5
-ln -sf /usr/share/php/php53-simplepie/autoloader.php \
+ln -s /usr/share/php/php53-simplepie/autoloader.php \
 %else
-ln -sf /usr/share/php/php-simplepie/autoloader.php \
+ln -s /usr/share/php/php-simplepie/autoloader.php \
 %endif
        ${RPM_BUILD_ROOT}%{_datadir}/wordpress/wp-includes/class-simplepie.php
 
@@ -203,6 +220,11 @@ for fic in phpmailer smtp; do
   ln -sf /usr/share/php/PHPMailer/class.$fic.php \
          ${RPM_BUILD_ROOT}%{_datadir}/wordpress/wp-includes/class-$fic.php
 done
+
+%if %{with_getid3}
+# Remove bundled php-getid3
+rm -r ${RPM_BUILD_ROOT}%{_datadir}/wordpress/wp-includes/ID3
+%endif
 
 # Remove bundled ca-bundle.crt
 %if %{with_cacert}
@@ -227,6 +249,7 @@ find ${RPM_BUILD_ROOT} \( -name \*.dolly -o -name \*.rhbz522897 -o -name \*.orig
 #mv -uf %{wp_content}/* %{_localstatedir}/www/wordpress/
 #/sbin/restorecon -R %{_localstatedir}/www/wordpress/
 #fi
+
 
 %clean
 rm -rf ${RPM_BUILD_ROOT}
@@ -256,10 +279,21 @@ rm -rf ${RPM_BUILD_ROOT}
 %attr(640,root,apache) %config(noreplace) %{_sysconfdir}/wordpress/wp-config.php
 %{_datadir}/wordpress/xmlrpc.php
 
+
 %changelog
+* Thu Feb 19 2015 Remi Collet <remi@fedoraproject.org> - 4.1.1-1
+- WordPress 4.1.1 Maintenance Release
+
+* Mon Dec 22 2014 Remi Collet <remi@fedoraproject.org> - 4.1-1
+- WordPress 4.1 “Dinah”
+
 * Sat Nov 29 2014 Christopher Swingler <chris@chrisswingler.com> - 4.0.1-1
 - update to 4.0.1 Security Release
 - Made some changes to support Jenkins parameters
+
+* Fri Nov 21 2014 Remi Collet <remi@fedoraproject.org> - 4.0.1-1
+- WordPress 4.0.1 Security Release
+- use system php-getid3 when available #1145574
 
 * Mon Sep  8 2014 Remi Collet <remi@fedoraproject.org> - 4.0-1
 - WordPress 4.0 “Benny”
