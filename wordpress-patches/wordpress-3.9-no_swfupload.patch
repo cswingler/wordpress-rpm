@@ -16,4 +16,4 @@ diff -up wordpress/wp-includes/script-loader.php.orig wordpress/wp-includes/scri
 -
  	$scripts->add( 'comment-reply', "/wp-includes/js/comment-reply$suffix.js", array(), false, 1 );
  
- 	$scripts->add( 'json2', "/wp-includes/js/json2$suffix.js", array(), '2011-02-23');
+ 	$scripts->add( 'json2', "/wp-includes/js/json2$suffix.js", array(), '2011-02-23' );
